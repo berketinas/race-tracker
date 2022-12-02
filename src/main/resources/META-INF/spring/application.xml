@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans:beans xmlns="http://www.springframework.org/schema/integration"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:int="http://www.springframework.org/schema/integration"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+			   https://www.springframework.org/schema/beans/spring-beans.xsd
+			   http://www.springframework.org/schema/integration
+			   https://www.springframework.org/schema/integration/spring-integration.xsd">
+
+    <beans:bean id="lapService" class="com.example.racetracker.service.LapService" />
+
+    <int:channel id="laptimeChannel" />
+    <int:channel id="fastestLapChannel" />
+
+    <int:channel id="betApiChannel" />
+    <int:publish-subscribe-channel id="betChannel" />
+
+    <int:publish-subscribe-channel id="trackerChannel" />
+    <int:json-to-object-transformer input-channel="laptimeChannel"
+                                    output-channel="trackerChannel"
+                                    type="com.example.racetracker.domain.LapInfo" />
+    <int:json-to-object-transformer input-channel="betApiChannel"
+                                    output-channel="betChannel"
+                                    type="com.example.racetracker.domain.Bet" />
+
+    <int:service-activator
+            input-channel="trackerChannel"
+            ref="lapService"
+            method="incrementLap"
+            async="true"/>
+
+    <int:filter input-channel="trackerChannel"
+                output-channel="fastestLapChannel"
+                ref="fastestLapChecker" />
+
+    <beans:bean id="fastestLapChecker" class="com.example.racetracker.manager.TrackerManager.FastestLapFilter" />
+</beans:beans>

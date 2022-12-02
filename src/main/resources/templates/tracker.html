@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+    <head>
+        <title>RACE TRACKER</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" th:href="@{style.css}">
+    </head>
+    <body>
+        <div class="d-flex justify-content-between">
+            <div class="col-6 bg-info">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">DRIVER</th>
+                            <th scope="col">LAST LAP</th>
+                            <th scope="col">INTERVAL</th>
+                            <th scope="col">LEADER</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="entry: ${leaderboard}">
+                            <td class="font-weight-bold" th:text="${entry.getName()}"></td>
+                            <td class="font-italic" th:text="${T(java.lang.String).format('%.2f', entry.getLastLap())}"></td>
+                            <td th:text="${leaderboard.indexOf(entry) != 0 ? '+' + T(java.lang.String).format('%.2f', entry.getTotalTime() - leaderboard.get(leaderboard.indexOf(entry) - 1).getTotalTime()) : 'Leader'}"></td>
+                            <td th:text="${leaderboard.indexOf(entry) != 0 ? '+' + T(java.lang.String).format('%.2f', entry.getTotalTime() - leaderboard.get(0).getTotalTime()) : 'Leader'}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-4">
+                <div class="col bg-info py-2">
+                    <p class="font-weight-bold">FASTEST LAP</p>
+                    <p class="d-flex justify-content-between">
+                        <span class="font-weight-bold" th:text="${fastestLap.getDriver()}"></span>
+                        <span class="font-italic" th:text="${fastestLap.getLaptime()}"></span>
+                    </p>
+                </div>
+                <hr />
+                <div class="col bg-info pt-2 d-flex justify-content-between">
+                    <p class="font-weight-bold">LAP COUNT</p>
+                    <p th:text="${lapCount / 20}"></p>
+                </div>
+                <hr />
+                <div class="col bg-info py-2">
+                    <div class="d-flex justify-content-between">
+                        <p class="font-weight-bold">DRIVER</p>
+                        <p class="font-weight-bold">AMOUNT</p>
+                    </div>
+                    <div th:each="entry: ${leaderboard}" class="d-flex justify-content-between">
+                        <p class="font-italic" th:text="${entry.getName()}"></p>
+                        <p th:text="${T(java.lang.String).format('%.2f', betTotals.get(entry.getName())) + ' $'}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            setTimeout(function() {
+                    window.location = window.location;
+                }, 3000
+            );
+        </script>
+    </body>
+</html>
